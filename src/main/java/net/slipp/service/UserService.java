@@ -1,27 +1,29 @@
 package net.slipp.service;
 
-import net.slipp.domain.User;
-import net.slipp.domain.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
-@Service
-public class UserService {
+import javax.annotation.Resource;
 
-    @Autowired
+import org.springframework.stereotype.Service;
+
+import net.slipp.UnAuthenticationException;
+import net.slipp.domain.User;
+import net.slipp.domain.UserRepository;
+
+@Service("userService")
+public class UserService {
+    @Resource(name = "userRepository")
     private UserRepository userRepository;
 
-    public User login(String userId, String password) {
+    public User login(String userId, String password) throws UnAuthenticationException {
         Optional<User> maybeUser = userRepository.findByUserId(userId);
         if (!maybeUser.isPresent()) {
-            throw new IllegalStateException();
+            throw new UnAuthenticationException();
         }
 
         User user = maybeUser.get();
         if (!user.matchPassword(password)) {
-            throw new IllegalStateException();
+            throw new UnAuthenticationException();
         }
 
         return user;

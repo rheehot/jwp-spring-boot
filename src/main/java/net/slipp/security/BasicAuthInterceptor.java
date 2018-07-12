@@ -6,12 +6,12 @@ import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.slipp.UnAuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import net.slipp.UnAuthenticationException;
 import net.slipp.domain.User;
 import net.slipp.service.UserService;
 
@@ -20,9 +20,6 @@ public class BasicAuthInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private UserService userService;
-
-//    @Autowired
-//    private UnAuthenticationException unAuthenticationException;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -39,13 +36,13 @@ public class BasicAuthInterceptor extends HandlerInterceptorAdapter {
         log.debug("username : {}", values[0]);
         log.debug("password : {}", values[1]);
 
-//        try {
+        try {
             User user = userService.login(values[0], values[1]);
             log.debug("Login Success : {}", user);
             request.getSession().setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
             return true;
-//        } catch (UnAuthenticationException e) {
-//            return true;
-//        }
+        } catch (UnAuthenticationException e) {
+            return true;
+        }
     }
 }
